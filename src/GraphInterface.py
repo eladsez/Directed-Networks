@@ -4,8 +4,8 @@ class GraphInterface:
     """This abstract class represents an interface of a graph."""
 
     def __init__(self):
-        self.nodes = dict[int, Node]({})
-        # self.edges = {}
+        self.nodes = {}
+        self.edges = {}# ((src,dest), w)
         self.MC = 0
 
     def v_size(self) -> int:
@@ -13,14 +13,14 @@ class GraphInterface:
         Returns the number of vertices in this graph
         @return: The number of vertices in this graph
         """
-        return self.nodes.__sizeof__()
+        return len(self.nodes)
 
     def e_size(self) -> int:
         """
         Returns the number of edges in this graph
         @return: The number of edges in this graph
         """
-        return self.edges.__sizeof__()
+        return len(self.edges)
 
     def get_all_v(self) -> dict:
         """return a dictionary of all the nodes in the Graph, each node is represented using a pair
@@ -46,7 +46,7 @@ class GraphInterface:
         on every change in the graph state - the MC should be increased
         @return: The current version of this graph.
         """
-        self.MC
+        return self.MC
 
     def add_edge(self, id1: int, id2: int, weight: float) -> bool:
         """
@@ -57,7 +57,14 @@ class GraphInterface:
         @return: True if the edge was added successfully, False o.w.
         Note: If the edge already exists or one of the nodes dose not exists the functions will do nothing
         """
-        raise NotImplementedError
+        if id1 in self.nodes.keys() and id2 in self.nodes.keys():
+            self.nodes[id1].edge_out[id2] = weight
+            self.nodes[id2].edge_in[id1] = weight
+            self.edges[(id1, id2)] = weight
+            self.MC += 1
+            return True
+        else:
+            return False
 
     def add_node(self, node_id: int, pos: tuple = None) -> bool:
         """
@@ -97,8 +104,51 @@ class GraphInterface:
         @return: True if the edge was removed successfully, False o.w.
         Note: If such an edge does not exists the function will do nothing
         """
-        raise NotImplementedError
+        if node_id1 in self.nodes and node_id2 in self.nodes:
+            if node_id1 in self.nodes[node_id2].edge_in and node_id2 in self.nodes[node_id1].edge_out:
+                self.nodes[node_id1].edge_out.pop(node_id2)
+                self.nodes[node_id2].edge_in.pop(node_id1)
+                self.MC += 1
+                self.edges.pop((node_id1, node_id2))
+                return True
+        return False
 
+    def __str__(self):
+        ans = "{\n\"Edges\": [\n"
+
+        edgeiter = enumerate(self.edges)
+        for key, edge in edgeiter:
+            ans += "{\n" + "\"src\": " + str(edge[0]) + ",\n" + "\"w\": "+ str(self.edges[edge[0], edge[1]]) + ",\n" + "\"dest\": " + str(edge[1]) + "\n" + "}"
+            if key == len(self.edges) - 1:
+                ans += "\n"
+                break
+            else:
+                ans += ",\n"
+
+        ans += "],\n\"Nodes\": ["
+        nodeiter = enumerate(self.nodes)
+        for key, nodeID in nodeiter:
+           ans += "{\n\"pos\": " + "\"" + str(self.nodes[nodeID].pos[0]) + "," + str(self.nodes[nodeID].pos[1]) + ",0.0\"" + ",\n\"id\": " + str(nodeID) + "\n}"
+           if key == len(self.nodes) - 1:
+               ans += "\n"
+               break
+           else:
+               ans += ",\n"
+
+        ans += "]\n}"
+        return ans
 
 if __name__ == '__main__':
-    pass
+    graph = GraphInterface()
+    graph.add_node(0, (50.0,20.0))
+    graph.add_node(1, (50.0,0.0))
+    graph.add_node(2, (0.0,33.0))
+    graph.add_node(3, (25.0,0.0))
+    graph.add_node(4, (0.0,0.0))
+    graph.add_node(5, (0,0))
+    graph.add_node(6, (0,0))
+    graph.add_edge(0,3,2)
+    graph.add_edge(0,2,5)
+    graph.add_edge(0,5,4)
+    graph.add_edge(1,3,9)
+    print(graph.__str__())
