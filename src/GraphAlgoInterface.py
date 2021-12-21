@@ -1,15 +1,22 @@
+import json
 from typing import List
-
-from src import GraphInterface
+from GraphInterface import GraphInterface
 
 
 class GraphAlgoInterface:
     """This abstract class represents an interface of a graph."""
 
+    def __init__(self, graph:GraphInterface = None):
+        if graph == None:
+            self.graph = GraphInterface()
+        else:
+            self.graph = graph
+
     def get_graph(self) -> GraphInterface:
         """
         :return: the directed graph on which the algorithm works on.
         """
+        return self.graph
 
     def load_from_json(self, file_name: str) -> bool:
         """
@@ -17,7 +24,20 @@ class GraphAlgoInterface:
         @param file_name: The path to the json file
         @returns True if the loading was successful, False o.w.
         """
-        raise NotImplementedError
+        if self.graph != None:
+            self.graph = GraphInterface()
+        try:
+            with open(file_name, "r") as f:
+                graph_dict = json.load(f)
+                for node in graph_dict["Nodes"]:
+                    pos = tuple(node["pos"].split(","))
+                    self.graph.add_node(node["id"], pos)
+                for edge in graph_dict["Edges"]:
+                    self.graph.add_edge(edge["src"], edge["dest"], edge["w"])
+                return True
+        except FileNotFoundError:
+            print(FileNotFoundError)
+            return False
 
     def save_to_json(self, file_name: str) -> bool:
         """
@@ -25,7 +45,13 @@ class GraphAlgoInterface:
         @param file_name: The path to the out file
         @return: True if the save was successful, False o.w.
         """
-        raise NotImplementedError
+        try:
+            with open(file_name, 'w') as f:
+                f.write(self.graph.__str__())
+            return True
+        except Exception:
+            print(Exception)
+            return False
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         """
@@ -73,3 +99,23 @@ class GraphAlgoInterface:
         @return: None
         """
         raise NotImplementedError
+
+if __name__ == '__main__':
+    graph = GraphInterface()
+    graph.add_node(0, (50.0,20.0))
+    graph.add_node(1, (50.0,0.0))
+    graph.add_node(2, (0.0,33.0))
+    graph.add_node(3, (25.0,0.0))
+    graph.add_node(4, (0.0,0.0))
+    graph.add_node(5, (0,0))
+    graph.add_node(6, (0,0))
+    graph.add_edge(0,3,2)
+    graph.add_edge(0,2,5)
+    graph.add_edge(0,5,4)
+    graph.add_edge(1,3,9)
+    # print(graph.__str__())
+    algo = GraphAlgoInterface(graph)
+    algo.load_from_json("../Data/A0.json")
+    print(algo.graph)
+    # print(algo.save_to_json("bla.json"))
+
