@@ -4,8 +4,8 @@ class GraphInterface:
     """This abstract class represents an interface of a graph."""
 
     def __init__(self):
-        self.nodes = {}
-        self.edges = {}# ((src,dest), w)
+        self.nodes = {} # (nodeID, node)
+        self.edges = {} # ((src,dest), w)
         self.MC = 0
 
     def v_size(self) -> int:

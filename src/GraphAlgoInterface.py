@@ -1,7 +1,7 @@
 import json
 from typing import List
 from GraphInterface import GraphInterface
-
+from queue import Queue
 
 class GraphAlgoInterface:
     """This abstract class represents an interface of a graph."""
@@ -52,6 +52,50 @@ class GraphAlgoInterface:
         except Exception:
             print(Exception)
             return False
+
+    def transpose(self) -> GraphInterface:
+        trans_graph = GraphInterface()
+        for count,node_id in enumerate(self.graph.nodes):
+            pos = (self.graph.nodes.get(node_id).pos[0], self.graph.nodes.get(node_id).pos[1])
+            trans_graph.add_node(node_id, pos)
+
+        for count, (src, dest) in enumerate(self.graph.edges):
+            trans_graph.add_edge(dest, src, self.graph.edges[(src, dest)])
+        return trans_graph
+
+    # 0 - unvisited ,  1 - in progress,  2 - visited
+    def bfs(self, src:int, graph:GraphInterface)-> int:
+        node_counter = 1 # set to 1 not to 0 because we already count the src
+        queue = Queue(self.graph.v_size())
+        for i, node in enumerate(graph.nodes.values()):
+            node.tag = 0
+        graph.nodes.get(src).tag = 1
+
+        queue.put(graph.nodes.get(src))
+        curr_node = adj_node = None
+        while not queue.empty():
+            curr_node = queue.get()
+            for i, adj in enumerate(curr_node.edge_out):
+                adj_node = graph.nodes.get(adj)
+                if adj_node.tag == 0:
+                    node_counter += 1
+                    adj_node.tag = 1
+                    queue.put(adj_node)
+            curr_node.tag = 2
+
+        return node_counter
+
+
+    def is_connected(self) -> bool:
+        trans = self.transpose()
+        src_id = list(self.graph.nodes.values()).pop().id
+        return self.bfs(src_id, self.graph) == self.graph.v_size() == self.bfs(src_id, trans)
+
+
+
+    def dijkstra(self, src:int, dest:int):
+
+        pass
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         """
@@ -106,16 +150,15 @@ if __name__ == '__main__':
     graph.add_node(1, (50.0,0.0))
     graph.add_node(2, (0.0,33.0))
     graph.add_node(3, (25.0,0.0))
-    graph.add_node(4, (0.0,0.0))
-    graph.add_node(5, (0,0))
-    graph.add_node(6, (0,0))
-    graph.add_edge(0,3,2)
-    graph.add_edge(0,2,5)
-    graph.add_edge(0,5,4)
-    graph.add_edge(1,3,9)
+    graph.add_edge(0,1,2)
+    graph.add_edge(1,2,5)
+    graph.add_edge(2,3,4)
+    graph.add_edge(3,0,9)
     # print(graph.__str__())
     algo = GraphAlgoInterface(graph)
-    algo.load_from_json("../Data/A0.json")
-    print(algo.graph)
+    # trans = algo.transpose()
+    # print(trans.__str__())
+    # algo.load_from_json("../Data/A2.json")
+    print(algo.is_connected())
     # print(algo.save_to_json("bla.json"))
 
