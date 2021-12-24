@@ -1,12 +1,15 @@
 import json
+import sys
 from typing import List
 from GraphInterface import GraphInterface
 from queue import Queue
+from queue import PriorityQueue
+
 
 class GraphAlgoInterface:
     """This abstract class represents an interface of a graph."""
 
-    def __init__(self, graph:GraphInterface = None):
+    def __init__(self, graph: GraphInterface = None):
         if graph == None:
             self.graph = GraphInterface()
         else:
@@ -55,7 +58,7 @@ class GraphAlgoInterface:
 
     def transpose(self) -> GraphInterface:
         trans_graph = GraphInterface()
-        for count,node_id in enumerate(self.graph.nodes):
+        for count, node_id in enumerate(self.graph.nodes):
             pos = (self.graph.nodes.get(node_id).pos[0], self.graph.nodes.get(node_id).pos[1])
             trans_graph.add_node(node_id, pos)
 
@@ -64,8 +67,8 @@ class GraphAlgoInterface:
         return trans_graph
 
     # 0 - unvisited ,  1 - in progress,  2 - visited
-    def bfs(self, src:int, graph:GraphInterface)-> int:
-        node_counter = 1 # set to 1 not to 0 because we already count the src
+    def bfs(self, src: int, graph: GraphInterface) -> int:
+        node_counter = 1  # set to 1 not to 0 because we already count the src
         queue = Queue(self.graph.v_size())
         for i, node in enumerate(graph.nodes.values()):
             node.tag = 0
@@ -85,17 +88,33 @@ class GraphAlgoInterface:
 
         return node_counter
 
-
     def is_connected(self) -> bool:
         trans = self.transpose()
         src_id = list(self.graph.nodes.values()).pop().id
         return self.bfs(src_id, self.graph) == self.graph.v_size() == self.bfs(src_id, trans)
 
+    # node.tag used for the distance, node.dad used for the prev node
+    def dijkstra(self, src: int):
+        pq = PriorityQueue(self.graph.v_size())
+        # init the distance of all the nodes
+        for i, node in enumerate(self.graph.nodes.values()):
+            if node.id == src:
+                node.tag = 0
+                pq.put(node)
+            else:
+                node.tag = sys.float_info.max
+                pq.put(node)
 
-
-    def dijkstra(self, src:int, dest:int):
-
-        pass
+        curr_node = adj_node = None
+        while not pq.empty():
+            curr_node = pq.get()
+            for i, (adj_id, w) in enumerate(curr_node.edge_out.items()):
+                adj_node = self.graph.nodes.get(adj_id)
+                if adj_node.tag > curr_node.tag + w:
+                    adj_node.tag = curr_node.tag + w
+                    adj_node.dad = curr_node.id
+                    temp = pq.get()
+                    pq.put(temp)
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         """
@@ -144,21 +163,23 @@ class GraphAlgoInterface:
         """
         raise NotImplementedError
 
+
 if __name__ == '__main__':
     graph = GraphInterface()
-    graph.add_node(0, (50.0,20.0))
-    graph.add_node(1, (50.0,0.0))
-    graph.add_node(2, (0.0,33.0))
-    graph.add_node(3, (25.0,0.0))
-    graph.add_edge(0,1,2)
-    graph.add_edge(1,2,5)
-    graph.add_edge(2,3,4)
-    graph.add_edge(3,0,9)
+    graph.add_node(0, (50.0, 20.0))
+    graph.add_node(1, (50.0, 0.0))
+    graph.add_node(2, (0.0, 33.0))
+    graph.add_node(3, (25.0, 0.0))
+    graph.add_edge(0, 1, 2)
+    graph.add_edge(1, 2, 5)
+    graph.add_edge(2, 3, 4)
+    graph.add_edge(3, 0, 9)
     # print(graph.__str__())
     algo = GraphAlgoInterface(graph)
+    algo.dijkstra(0)
+    print(graph.nodes.get(3).tag)
     # trans = algo.transpose()
     # print(trans.__str__())
     # algo.load_from_json("../Data/A2.json")
-    print(algo.is_connected())
+    # print(algo.is_connected())
     # print(algo.save_to_json("bla.json"))
-
