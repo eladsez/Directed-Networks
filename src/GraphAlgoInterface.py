@@ -139,7 +139,29 @@ class GraphAlgoInterface:
         More info:
         https://en.wikipedia.org/wiki/Dijkstra's_algorithm
         """
-        raise NotImplementedError
+        nodes_id = list(self.graph.nodes.keys())
+        if (not nodes_id.__contains__(id1) or not nodes_id.__contains__(id2)):
+            return float('inf'), []
+
+        self.dijkstra(id1)
+
+        if (self.graph.nodes.get(id2).tag == sys.float_info.max):
+            return float('inf'), []
+
+        path = []
+        path.append(id2)
+        curr_node = self.graph.nodes.get(id2).dad
+        while (curr_node != id1):
+            path.append(curr_node)
+            curr_node = self.graph.nodes.get(curr_node).dad
+        path.append(id1)
+        path.reverse()
+
+        return self.graph.nodes.get(id2).tag, path
+
+
+
+
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         """
@@ -153,6 +175,33 @@ class GraphAlgoInterface:
         Finds the node that has the shortest distance to it's farthest node.
         :return: The nodes id, min-maximum distance
         """
+        if not self.is_connected(): return None, None
+        center_id = None
+        min_dist = sys.float_info.max
+        curr_dist = None
+        for i, node_id in enumerate(self.graph.nodes.keys()):
+            curr_dist = self.farest_dist(node_id, min_dist)
+            if curr_dist < min_dist:
+                min_dist = curr_dist
+                center_id = node_id
+
+        return node_id, min_dist
+
+
+    def farest_dist(self, src:int, curr_min_dist:float) -> float:
+        max_dist = sys.float_info.min
+        curr_dist = None
+        for i, node_id in enumerate(self.graph.nodes.keys()):
+            curr_dist = self.shortest_path(src, node_id)[0]
+            if curr_dist > curr_min_dist:
+                break
+            if curr_dist > max_dist:
+                max_dist = curr_dist
+
+        return max_dist
+
+
+
 
     def plot_graph(self) -> None:
         """
@@ -176,8 +225,8 @@ if __name__ == '__main__':
     graph.add_edge(3, 0, 9)
     # print(graph.__str__())
     algo = GraphAlgoInterface(graph)
-    algo.dijkstra(0)
-    print(graph.nodes.get(3).tag)
+    # print(algo.shortest_path(0,3))
+    # print(algo.shortest_path(3,2))
     # trans = algo.transpose()
     # print(trans.__str__())
     # algo.load_from_json("../Data/A2.json")
