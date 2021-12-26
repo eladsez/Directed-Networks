@@ -3,7 +3,7 @@ import sys
 from typing import List
 from GraphInterface import GraphInterface
 from queue import Queue
-from queue import PriorityQueue
+from classes import PriorityQueue
 
 
 class GraphAlgoInterface:
@@ -64,6 +64,7 @@ class GraphAlgoInterface:
 
         for count, (src, dest) in enumerate(self.graph.edges):
             trans_graph.add_edge(dest, src, self.graph.edges[(src, dest)])
+
         return trans_graph
 
     # 0 - unvisited ,  1 - in progress,  2 - visited
@@ -95,26 +96,30 @@ class GraphAlgoInterface:
 
     # node.tag used for the distance, node.dad used for the prev node
     def dijkstra(self, src: int):
-        pq = PriorityQueue(self.graph.v_size())
+        pq = PriorityQueue()
         # init the distance of all the nodes
         for i, node in enumerate(self.graph.nodes.values()):
             if node.id == src:
                 node.tag = 0
-                pq.put(node)
+                pq.enqueue(node)
             else:
                 node.tag = sys.float_info.max
-                pq.put(node)
+                pq.enqueue(node)
 
         curr_node = adj_node = None
-        while not pq.empty():
-            curr_node = pq.get()
+        while not pq.is_empty():
+            curr_node = pq.dequeue()
             for i, (adj_id, w) in enumerate(curr_node.edge_out.items()):
                 adj_node = self.graph.nodes.get(adj_id)
+
+
                 if adj_node.tag > curr_node.tag + w:
                     adj_node.tag = curr_node.tag + w
                     adj_node.dad = curr_node.id
-                    temp = pq.get()
-                    pq.put(temp)
+                    temp = adj_node
+                    pq.pq.remove(adj_node)
+                    pq.enqueue(temp)
+
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         """
@@ -140,7 +145,7 @@ class GraphAlgoInterface:
         https://en.wikipedia.org/wiki/Dijkstra's_algorithm
         """
         nodes_id = list(self.graph.nodes.keys())
-        if (not nodes_id.__contains__(id1) or not nodes_id.__contains__(id2)):
+        if (not id1 in nodes_id) or (not id2 in nodes_id):
             return float('inf'), []
 
         self.dijkstra(id1)
@@ -159,10 +164,6 @@ class GraphAlgoInterface:
 
         return self.graph.nodes.get(id2).tag, path
 
-
-
-
-
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         """
         Finds the shortest path that visits all the nodes in the list
@@ -175,7 +176,7 @@ class GraphAlgoInterface:
         Finds the node that has the shortest distance to it's farthest node.
         :return: The nodes id, min-maximum distance
         """
-        if not self.is_connected(): return None, None
+        if not self.is_connected(): return None, sys.float_info.max
         center_id = None
         min_dist = sys.float_info.max
         curr_dist = None
@@ -185,13 +186,14 @@ class GraphAlgoInterface:
                 min_dist = curr_dist
                 center_id = node_id
 
-        return node_id, min_dist
+        return center_id, min_dist
 
 
     def farest_dist(self, src:int, curr_min_dist:float) -> float:
         max_dist = sys.float_info.min
         curr_dist = None
         for i, node_id in enumerate(self.graph.nodes.keys()):
+            if node_id == src: continue
             curr_dist = self.shortest_path(src, node_id)[0]
             if curr_dist > curr_min_dist:
                 break
@@ -224,11 +226,12 @@ if __name__ == '__main__':
     graph.add_edge(2, 3, 4)
     graph.add_edge(3, 0, 9)
     # print(graph.__str__())
-    algo = GraphAlgoInterface(graph)
+    algo = GraphAlgoInterface()
     # print(algo.shortest_path(0,3))
-    # print(algo.shortest_path(3,2))
     # trans = algo.transpose()
     # print(trans.__str__())
-    # algo.load_from_json("../Data/A2.json")
+    algo.load_from_json("../Data/A2.json")
+    # print(algo.shortest_path(5,30))
+    print(algo.centerPoint())
     # print(algo.is_connected())
     # print(algo.save_to_json("bla.json"))
