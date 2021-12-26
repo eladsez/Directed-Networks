@@ -33,8 +33,12 @@ class GraphAlgoInterface:
             with open(file_name, "r") as f:
                 graph_dict = json.load(f)
                 for node in graph_dict["Nodes"]:
-                    pos = tuple(node["pos"].split(","))
-                    self.graph.add_node(node["id"], pos)
+                    try:
+                        pos = tuple(node["pos"].split(","))
+                        self.graph.add_node(node["id"], pos)
+                    except:
+                        self.graph.add_node(node["id"])
+
                 for edge in graph_dict["Edges"]:
                     self.graph.add_edge(edge["src"], edge["dest"], edge["w"])
                 return True
@@ -59,8 +63,10 @@ class GraphAlgoInterface:
     def transpose(self) -> GraphInterface:
         trans_graph = GraphInterface()
         for count, node_id in enumerate(self.graph.nodes):
-            pos = (self.graph.nodes.get(node_id).pos[0], self.graph.nodes.get(node_id).pos[1])
-            trans_graph.add_node(node_id, pos)
+            try:
+                pos = (self.graph.nodes.get(node_id).pos[0], self.graph.nodes.get(node_id).pos[1])
+                trans_graph.add_node(node_id, pos)
+            except: trans_graph.add_node(node_id)
 
         for count, (src, dest) in enumerate(self.graph.edges):
             trans_graph.add_edge(dest, src, self.graph.edges[(src, dest)])
@@ -195,10 +201,12 @@ class GraphAlgoInterface:
         for i, node_id in enumerate(self.graph.nodes.keys()):
             if node_id == src: continue
             curr_dist = self.shortest_path(src, node_id)[0]
-            if curr_dist > curr_min_dist:
-                break
+
             if curr_dist > max_dist:
                 max_dist = curr_dist
+
+            if curr_dist > curr_min_dist:
+                break
 
         return max_dist
 
@@ -230,7 +238,7 @@ if __name__ == '__main__':
     # print(algo.shortest_path(0,3))
     # trans = algo.transpose()
     # print(trans.__str__())
-    algo.load_from_json("../Data/A2.json")
+    algo.load_from_json("../Data/A0.json")
     # print(algo.shortest_path(5,30))
     print(algo.centerPoint())
     # print(algo.is_connected())
