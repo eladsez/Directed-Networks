@@ -170,6 +170,13 @@ class GraphAlgoInterface:
         :param node_lst: A list of nodes id's
         :return: A list of the nodes id's in the path, and the overall distance
         """
+        # run only on connected graphs, with 1 node minimum
+        if self.is_connected() or self.graph.v_size() == 0:
+            return None
+
+        existingRout = List.copy(node_lst)
+
+
 
     def centerPoint(self) -> (int, float):
         """
