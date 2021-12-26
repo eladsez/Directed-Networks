@@ -4,6 +4,8 @@ import sys
 from typing import List
 from DiGraph import DiGraph
 from queue import Queue
+
+from Logic.Node import Node
 from PriorityQueue import PriorityQueue
 
 
@@ -172,26 +174,36 @@ class GraphAlgo(GraphAlgoInterface):
 
     def add_help_nodes(self, node_list: List[Node]):
         assembled_route = []
+        tmp = []
         added_nodes = []
-        j = None
-        for i in range(0, len(node_list)):
-            j = i + 1
+        i = 0
+        j = 1
+        while i < len(node_list) and j < len(node_list):
+            tmp.clear()
             added_nodes.clear()
-            added_nodes.extend(self.shortest_path(node_list[i].id, node_list[j].id)[1])
+            tmp.extend(self.shortest_path(node_list[i].id, node_list[j].id)[1])
+            for k in tmp:
+                added_nodes.append(self.graph.nodes[k])
+
             if i > 0:
                 added_nodes.pop(0)
                 assembled_route.extend(added_nodes)
             else:
                 assembled_route.extend(added_nodes)
+            i += 1
+            j += 1
 
         return assembled_route
 
     def rout_dist(self, node_list: List[Node]):
         dist = 0
-        j = None
-        for i in range(0, len(node_list)):
+        j = 1
+        i = 0
+        while j < len(node_list):
             curr_dist = self.shortest_path(node_list[i].id, node_list[j].id)[0]
             dist += curr_dist
+            i += 1
+            j += 1
 
         return dist
 
@@ -224,18 +236,22 @@ class GraphAlgo(GraphAlgoInterface):
         :return: A list of the nodes id's in the path, and the overall distance
         """
         # run only on connected graphs, with 1 node minimum
-        if self.is_connected() or self.graph.v_size() == 0:
+        if not self.is_connected() or self.graph.v_size() == 0:
             return None
 
-        existing_route = List.copy(node_lst)
+        actual_nodes = []
+        for i in node_lst:
+            actual_nodes.append(self.graph.nodes[i])
+
+        existing_route = List.copy(actual_nodes)
         existing_route = self.add_help_nodes(existing_route)
         new_route = []
         tmp2 = []
-        tmp1 = List.copy(node_lst)
+        tmp1 = List.copy(actual_nodes)
         best_dist = self.rout_dist(existing_route)
 
-        for i in range(1, len(node_lst) - 1):
-            for j in range(i + 1, len(node_lst)):
+        for i in range(1, len(actual_nodes) - 1):
+            for j in range(i + 1, len(actual_nodes)):
                 tmp2 = List.copy(tmp1)
                 tmp1 = self.make_new_route(tmp2, i, j)
                 new_route = self.add_help_nodes(tmp1)
@@ -246,7 +262,11 @@ class GraphAlgo(GraphAlgoInterface):
                 else:
                     tmp1 = tmp2
 
-        return existing_route
+        ans = []
+        for i in existing_route:
+            ans.append(i.id)
+
+        return existing_route, best_dist
 
     def centerPoint(self) -> (int, float):
         """
@@ -308,6 +328,6 @@ if __name__ == '__main__':
     # print(trans.__str__())
     algo.load_from_json("../../Data/A0.json")
     # print(algo.shortest_path(5,30))
-    print(algo.centerPoint())
+    print(algo.TSP([1, 2, 3, 4]))
     # print(algo.is_connected())
     # print(algo.save_to_json("bla.json"))
