@@ -1,11 +1,16 @@
-from classes import Node
+from abc import ABC
 
-class GraphInterface:
+import API.GraphAlgoInterface
+from Node import Node
+from API.GraphInterface import GraphInterface
+
+
+class DiGraph(GraphInterface):
     """This abstract class represents an interface of a graph."""
 
     def __init__(self):
-        self.nodes = {} # (nodeID, node)
-        self.edges = {} # ((src,dest), w)
+        self.nodes = {}  # (nodeID, node)
+        self.edges = {}  # ((src,dest), w)
         self.MC = 0
 
     def v_size(self) -> int:
@@ -95,7 +100,6 @@ class GraphInterface:
         else:
             return False
 
-
     def remove_edge(self, node_id1: int, node_id2: int) -> bool:
         """
         Removes an edge from the graph.
@@ -118,7 +122,8 @@ class GraphInterface:
 
         edgeiter = enumerate(self.edges)
         for key, edge in edgeiter:
-            ans += "{\n" + "\"src\": " + str(edge[0]) + ",\n" + "\"w\": "+ str(self.edges[edge[0], edge[1]]) + ",\n" + "\"dest\": " + str(edge[1]) + "\n" + "}"
+            ans += "{\n" + "\"src\": " + str(edge[0]) + ",\n" + "\"w\": " + str(
+                self.edges[edge[0], edge[1]]) + ",\n" + "\"dest\": " + str(edge[1]) + "\n" + "}"
             if key == len(self.edges) - 1:
                 ans += "\n"
                 break
@@ -128,27 +133,29 @@ class GraphInterface:
         ans += "],\n\"Nodes\": ["
         nodeiter = enumerate(self.nodes)
         for key, nodeID in nodeiter:
-           ans += "{\n\"pos\": " + "\"" + str(self.nodes[nodeID].pos[0]) + "," + str(self.nodes[nodeID].pos[1]) + ",0.0\"" + ",\n\"id\": " + str(nodeID) + "\n}"
-           if key == len(self.nodes) - 1:
-               ans += "\n"
-               break
-           else:
-               ans += ",\n"
+            ans += "{\n\"pos\": " + "\"" + str(self.nodes[nodeID].pos[0]) + "," + str(
+                self.nodes[nodeID].pos[1]) + ",0.0\"" + ",\n\"id\": " + str(nodeID) + "\n}"
+            if key == len(self.nodes) - 1:
+                ans += "\n"
+                break
+            else:
+                ans += ",\n"
 
         ans += "]\n}"
         return ans
 
+
 if __name__ == '__main__':
-    graph = GraphInterface()
-    graph.add_node(0, (50.0,20.0))
-    graph.add_node(1, (50.0,0.0))
-    graph.add_node(2, (0.0,33.0))
-    graph.add_node(3, (25.0,0.0))
-    graph.add_node(4, (0.0,0.0))
-    graph.add_node(5, (0,0))
-    graph.add_node(6, (0,0))
-    graph.add_edge(0,3,2)
-    graph.add_edge(0,2,5)
-    graph.add_edge(0,5,4)
-    graph.add_edge(1,3,9)
+    graph = DiGraph()
+    graph.add_node(0, (50.0, 20.0))
+    graph.add_node(1, (50.0, 0.0))
+    graph.add_node(2, (0.0, 33.0))
+    graph.add_node(3, (25.0, 0.0))
+    graph.add_node(4, (0.0, 0.0))
+    graph.add_node(5, (0, 0))
+    graph.add_node(6, (0, 0))
+    graph.add_edge(0, 3, 2)
+    graph.add_edge(0, 2, 5)
+    graph.add_edge(0, 5, 4)
+    graph.add_edge(1, 3, 9)
     print(graph.__str__())

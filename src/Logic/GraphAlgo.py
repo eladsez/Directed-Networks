@@ -1,21 +1,22 @@
+from API.GraphAlgoInterface import GraphAlgoInterface
 import json
 import sys
 from typing import List
-from GraphInterface import GraphInterface
+from DiGraph import DiGraph
 from queue import Queue
-from classes import PriorityQueue, Node
+from PriorityQueue import PriorityQueue
 
 
-class GraphAlgoInterface:
+class GraphAlgo(GraphAlgoInterface):
     """This abstract class represents an interface of a graph."""
 
-    def __init__(self, graph: GraphInterface = None):
+    def __init__(self, graph: DiGraph = None):
         if graph == None:
-            self.graph = GraphInterface()
+            self.graph = DiGraph()
         else:
             self.graph = graph
 
-    def get_graph(self) -> GraphInterface:
+    def get_graph(self) -> DiGraph:
         """
         :return: the directed graph on which the algorithm works on.
         """
@@ -28,7 +29,7 @@ class GraphAlgoInterface:
         @returns True if the loading was successful, False o.w.
         """
         if self.graph != None:
-            self.graph = GraphInterface()
+            self.graph = DiGraph()
         try:
             with open(file_name, "r") as f:
                 graph_dict = json.load(f)
@@ -60,8 +61,8 @@ class GraphAlgoInterface:
             print(Exception)
             return False
 
-    def transpose(self) -> GraphInterface:
-        trans_graph = GraphInterface()
+    def transpose(self) -> DiGraph:
+        trans_graph = DiGraph()
         for count, node_id in enumerate(self.graph.nodes):
             try:
                 pos = (self.graph.nodes.get(node_id).pos[0], self.graph.nodes.get(node_id).pos[1])
@@ -75,7 +76,7 @@ class GraphAlgoInterface:
         return trans_graph
 
     # 0 - unvisited ,  1 - in progress,  2 - visited
-    def bfs(self, src: int, graph: GraphInterface) -> int:
+    def bfs(self, src: int, graph: DiGraph) -> int:
         node_counter = 1  # set to 1 not to 0 because we already count the src
         queue = Queue(self.graph.v_size())
         for i, node in enumerate(graph.nodes.values()):
@@ -286,25 +287,26 @@ class GraphAlgoInterface:
         Otherwise, they will be placed in a random but elegant manner.
         @return: None
         """
+
         raise NotImplementedError
 
 
 if __name__ == '__main__':
-    graph = GraphInterface()
-    graph.add_node(0, (50.0, 20.0))
-    graph.add_node(1, (50.0, 0.0))
-    graph.add_node(2, (0.0, 33.0))
-    graph.add_node(3, (25.0, 0.0))
-    graph.add_edge(0, 1, 2)
-    graph.add_edge(1, 2, 5)
-    graph.add_edge(2, 3, 4)
-    graph.add_edge(3, 0, 9)
+    # graph = GraphInterface()
+    # graph.add_node(0, (50.0, 20.0))
+    # graph.add_node(1, (50.0, 0.0))
+    # graph.add_node(2, (0.0, 33.0))
+    # graph.add_node(3, (25.0, 0.0))
+    # graph.add_edge(0, 1, 2)
+    # graph.add_edge(1, 2, 5)
+    # graph.add_edge(2, 3, 4)
+    # graph.add_edge(3, 0, 9)
     # print(graph.__str__())
-    algo = GraphAlgoInterface()
+    algo = GraphAlgo()
     # print(algo.shortest_path(0,3))
     # trans = algo.transpose()
     # print(trans.__str__())
-    algo.load_from_json("../Data/A0.json")
+    algo.load_from_json("../../Data/A0.json")
     # print(algo.shortest_path(5,30))
     print(algo.centerPoint())
     # print(algo.is_connected())
