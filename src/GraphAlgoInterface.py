@@ -3,7 +3,7 @@ import sys
 from typing import List
 from GraphInterface import GraphInterface
 from queue import Queue
-from classes import PriorityQueue
+from classes import PriorityQueue, Node
 
 
 class GraphAlgoInterface:
@@ -66,7 +66,8 @@ class GraphAlgoInterface:
             try:
                 pos = (self.graph.nodes.get(node_id).pos[0], self.graph.nodes.get(node_id).pos[1])
                 trans_graph.add_node(node_id, pos)
-            except: trans_graph.add_node(node_id)
+            except:
+                trans_graph.add_node(node_id)
 
         for count, (src, dest) in enumerate(self.graph.edges):
             trans_graph.add_edge(dest, src, self.graph.edges[(src, dest)])
@@ -118,14 +119,12 @@ class GraphAlgoInterface:
             for i, (adj_id, w) in enumerate(curr_node.edge_out.items()):
                 adj_node = self.graph.nodes.get(adj_id)
 
-
                 if adj_node.tag > curr_node.tag + w:
                     adj_node.tag = curr_node.tag + w
                     adj_node.dad = curr_node.id
                     temp = adj_node
                     pq.pq.remove(adj_node)
                     pq.enqueue(temp)
-
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         """
@@ -170,6 +169,53 @@ class GraphAlgoInterface:
 
         return self.graph.nodes.get(id2).tag, path
 
+    def add_help_nodes(self, node_list: List[Node]):
+        assembled_route = []
+        added_nodes = []
+        j = None
+        for i in range(0, len(node_list)):
+            j = i + 1
+            added_nodes.clear()
+            added_nodes.extend(self.shortest_path(node_list[i].id, node_list[j].id)[1])
+            if i > 0:
+                added_nodes.pop(0)
+                assembled_route.extend(added_nodes)
+            else:
+                assembled_route.extend(added_nodes)
+
+        return assembled_route
+
+    def rout_dist(self, node_list: List[Node]):
+        dist = 0
+        j = None
+        for i in range(0, len(node_list)):
+            curr_dist = self.shortest_path(node_list[i].id, node_list[j].id)[0]
+            dist += curr_dist
+
+        return dist
+
+    def make_new_route(self, node_list: List[Node], node1: Node, node2: Node):
+        assembled_route = List.copy(node_list)
+        node1_to_node2 = []
+        route_end = []
+
+        # coping the end nodes
+        for i in range(len(assembled_route) - 1, node2):
+            route_end.append(assembled_route.pop(i))
+        List.reverse(route_end)
+
+        # coping and reversing the order of all the nodes from node1 to node2
+        for i in range(node2, node1):
+            node1_to_node2.append(assembled_route.pop(i))
+
+        # rebuilt the list middle
+        assembled_route.extend(node1_to_node2)
+
+        # rebuild the list end
+        assembled_route.extend(route_end)
+
+        return assembled_route
+
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         """
         Finds the shortest path that visits all the nodes in the list
@@ -180,9 +226,26 @@ class GraphAlgoInterface:
         if self.is_connected() or self.graph.v_size() == 0:
             return None
 
-        existingRout = List.copy(node_lst)
+        existing_route = List.copy(node_lst)
+        existing_route = self.add_help_nodes(existing_route)
+        new_route = []
+        tmp2 = []
+        tmp1 = List.copy(node_lst)
+        best_dist = self.rout_dist(existing_route)
 
+        for i in range(1, len(node_lst) - 1):
+            for j in range(i + 1, len(node_lst)):
+                tmp2 = List.copy(tmp1)
+                tmp1 = self.make_new_route(tmp2, i, j)
+                new_route = self.add_help_nodes(tmp1)
+                new_dist = self.rout_dist(new_route)
+                if new_dist < best_dist:
+                    existing_route = new_route
+                    best_dist = new_dist
+                else:
+                    tmp1 = tmp2
 
+        return existing_route
 
     def centerPoint(self) -> (int, float):
         """
@@ -201,8 +264,7 @@ class GraphAlgoInterface:
 
         return center_id, min_dist
 
-
-    def farest_dist(self, src:int, curr_min_dist:float) -> float:
+    def farest_dist(self, src: int, curr_min_dist: float) -> float:
         max_dist = sys.float_info.min
         curr_dist = None
         for i, node_id in enumerate(self.graph.nodes.keys()):
@@ -216,9 +278,6 @@ class GraphAlgoInterface:
                 break
 
         return max_dist
-
-
-
 
     def plot_graph(self) -> None:
         """
