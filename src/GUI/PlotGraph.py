@@ -17,7 +17,6 @@ class PlotView:
         node_list = enumerate(self.graph.nodes.values())
 
         for i, node in node_list:
-            print(node)
             if node.pos == None: continue
             self.node_x_pos[node.id] = node.pos[0]
             self.node_y_pos[node.id] = node.pos[1]
@@ -30,13 +29,6 @@ class PlotView:
             if node.pos == None:
                 self.node_x_pos[node.id] = random.uniform(min_x, max_x)
                 self.node_y_pos[node.id] = random.uniform(min_y, max_y)
-
-        print(len(self.node_x_pos))
-
-        for i, x in enumerate(self.node_x_pos.values()):
-            print(x)
-
-        plt.xlim(min_x, max_x), plt.ylim(min_y, max_y)
 
     def draw_graph(self):
         for node in list(self.graph.nodes.values()):
