@@ -2,24 +2,22 @@ from API.GraphAlgoInterface import GraphAlgoInterface
 import json
 import sys
 from typing import List
-from API.GraphInterface import GraphInterface
+from DiGraph import DiGraph
 from queue import Queue
-from GUI.PlotGraph import PlotView
-from Logic.DiGraph import DiGraph
-from Logic.PriorityQueue import PriorityQueue
+from PriorityQueue import PriorityQueue
 
 
 class GraphAlgo(GraphAlgoInterface):
     """This abstract class represents an interface of a graph."""
 
-    def __init__(self, graph: GraphInterface = None):
+    def __init__(self, graph: DiGraph = None):
         if graph == None:
             self.graph = DiGraph()
         else:
             self.graph = graph
         self.plot = None
 
-    def get_graph(self) -> GraphInterface:
+    def get_graph(self) -> DiGraph:
         """
         :return: the directed graph on which the algorithm works on.
         """
@@ -39,7 +37,7 @@ class GraphAlgo(GraphAlgoInterface):
                 for node in graph_dict["Nodes"]:
                     try:
                         pos = tuple(node["pos"].split(","))
-                        self.graph.add_node(node["id"], float(pos[0]), float(pos[1]))
+                        self.graph.add_node(node["id"], pos)
                     except:
                         self.graph.add_node(node["id"])
 
@@ -64,7 +62,7 @@ class GraphAlgo(GraphAlgoInterface):
             print(Exception)
             return False
 
-    def transpose(self) -> GraphInterface:
+    def transpose(self) -> DiGraph:
         trans_graph = DiGraph()
         for count, node_id in enumerate(self.graph.nodes):
             try:
@@ -173,12 +171,101 @@ class GraphAlgo(GraphAlgoInterface):
 
         return self.graph.nodes.get(id2).tag, path
 
+    def add_help_nodes(self, node_list: List[Logic.Node.Node]):
+        assembled_route = []
+        tmp = []
+        added_nodes = []
+        i = 0
+        j = 1
+        while i < len(node_list) and j < len(node_list):
+            tmp.clear()
+            added_nodes.clear()
+            tmp.extend(self.shortest_path(node_list[i].id, node_list[j].id)[1])
+            for k in tmp:
+                added_nodes.append(self.graph.nodes[k])
+
+            if i > 0:
+                added_nodes.pop(0)
+                assembled_route.extend(added_nodes)
+            else:
+                assembled_route.extend(added_nodes)
+            i += 1
+            j += 1
+
+        return assembled_route
+
+    def rout_dist(self, node_list: List[Node]):
+        dist = 0
+        j = 1
+        i = 0
+        while j < len(node_list):
+            curr_dist = self.shortest_path(node_list[i].id, node_list[j].id)[0]
+            dist += curr_dist
+            i += 1
+            j += 1
+
+        return dist
+
+    def make_new_route(self, node_list: List[Node], node1: Node, node2: Node):
+        assembled_route = List.copy(node_list)
+        node1_to_node2 = []
+        route_end = []
+
+        # coping the end nodes
+        for i in range(len(assembled_route) - 1, node2):
+            route_end.append(assembled_route.pop(i))
+        List.reverse(route_end)
+
+        # coping and reversing the order of all the nodes from node1 to node2
+        for i in range(node2, node1):
+            node1_to_node2.append(assembled_route.pop(i))
+
+        # rebuilt the list middle
+        assembled_route.extend(node1_to_node2)
+
+        # rebuild the list end
+        assembled_route.extend(route_end)
+
+        return assembled_route
+
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         """
         Finds the shortest path that visits all the nodes in the list
         :param node_lst: A list of nodes id's
         :return: A list of the nodes id's in the path, and the overall distance
         """
+        # run only on connected graphs, with 1 node minimum
+        if not self.is_connected() or self.graph.v_size() == 0:
+            return None
+
+        actual_nodes = []
+        for i in node_lst:
+            actual_nodes.append(self.graph.nodes[i])
+
+        existing_route = List.copy(actual_nodes)
+        existing_route = self.add_help_nodes(existing_route)
+        new_route = []
+        tmp2 = []
+        tmp1 = List.copy(actual_nodes)
+        best_dist = self.rout_dist(existing_route)
+
+        for i in range(1, len(actual_nodes) - 1):
+            for j in range(i + 1, len(actual_nodes)):
+                tmp2 = List.copy(tmp1)
+                tmp1 = self.make_new_route(tmp2, i, j)
+                new_route = self.add_help_nodes(tmp1)
+                new_dist = self.rout_dist(new_route)
+                if new_dist < best_dist:
+                    existing_route = new_route
+                    best_dist = new_dist
+                else:
+                    tmp1 = tmp2
+
+        ans = []
+        for i in existing_route:
+            ans.append(i.id)
+
+        return existing_route, best_dist
 
     def centerPoint(self) -> (int, float):
         """
@@ -219,9 +306,8 @@ class GraphAlgo(GraphAlgoInterface):
         Otherwise, they will be placed in a random but elegant manner.
         @return: None
         """
-        self.plot = PlotView(self.graph)
-        self.plot.update_scale()
-        # self.plot.draw_graph()
+
+        raise NotImplementedError
 
 
 if __name__ == '__main__':
@@ -236,6 +322,11 @@ if __name__ == '__main__':
     # graph.add_edge(3, 0, 9)
     # print(graph.__str__())
     algo = GraphAlgo()
+    # print(algo.shortest_path(0,3))
+    # trans = algo.transpose()
+    # print(trans.__str__())
     algo.load_from_json("../../Data/A0.json")
     algo.plot_graph()
+    print(algo.TSP([1, 2, 3, 4]))
+
 

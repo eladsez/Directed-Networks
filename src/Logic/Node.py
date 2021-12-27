@@ -12,6 +12,10 @@ class Node:
     def __lt__(self, other):
         return self.tag < other.tag
 
+    def __repr__(self):
+        return f'id: {str(self.id)}, pos: {self.pos}'
+
+
 
 
 
