@@ -2,21 +2,24 @@ from API.GraphAlgoInterface import GraphAlgoInterface
 import json
 import sys
 from typing import List
-from DiGraph import DiGraph
+from API.GraphInterface import GraphInterface
 from queue import Queue
-from PriorityQueue import PriorityQueue
+from GUI.PlotGraph import PlotView
+from Logic.DiGraph import DiGraph
+from Logic.PriorityQueue import PriorityQueue
 
 
 class GraphAlgo(GraphAlgoInterface):
     """This abstract class represents an interface of a graph."""
 
-    def __init__(self, graph: DiGraph = None):
+    def __init__(self, graph: GraphInterface = None):
         if graph == None:
             self.graph = DiGraph()
         else:
             self.graph = graph
+        self.plot = None
 
-    def get_graph(self) -> DiGraph:
+    def get_graph(self) -> GraphInterface:
         """
         :return: the directed graph on which the algorithm works on.
         """
@@ -36,7 +39,7 @@ class GraphAlgo(GraphAlgoInterface):
                 for node in graph_dict["Nodes"]:
                     try:
                         pos = tuple(node["pos"].split(","))
-                        self.graph.add_node(node["id"], pos)
+                        self.graph.add_node(node["id"], float(pos[0]), float(pos[1]))
                     except:
                         self.graph.add_node(node["id"])
 
@@ -61,7 +64,7 @@ class GraphAlgo(GraphAlgoInterface):
             print(Exception)
             return False
 
-    def transpose(self) -> DiGraph:
+    def transpose(self) -> GraphInterface:
         trans_graph = DiGraph()
         for count, node_id in enumerate(self.graph.nodes):
             try:
@@ -216,8 +219,9 @@ class GraphAlgo(GraphAlgoInterface):
         Otherwise, they will be placed in a random but elegant manner.
         @return: None
         """
-
-        raise NotImplementedError
+        self.plot = PlotView(self.graph)
+        self.plot.update_scale()
+        # self.plot.draw_graph()
 
 
 if __name__ == '__main__':
@@ -232,11 +236,6 @@ if __name__ == '__main__':
     # graph.add_edge(3, 0, 9)
     # print(graph.__str__())
     algo = GraphAlgo()
-    # print(algo.shortest_path(0,3))
-    # trans = algo.transpose()
-    # print(trans.__str__())
     algo.load_from_json("../../Data/A0.json")
-    # print(algo.shortest_path(5,30))
-    print(algo.centerPoint())
-    # print(algo.is_connected())
-    # print(algo.save_to_json("bla.json"))
+    algo.plot_graph()
+
