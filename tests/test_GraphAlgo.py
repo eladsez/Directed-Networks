@@ -1,24 +1,71 @@
 from unittest import TestCase
 
+from Logic.DiGraph import DiGraph
+from Logic.GraphAlgo import GraphAlgo
+
 
 class TestGraphAlgo(TestCase):
     def test_get_graph(self):
-        self.fail()
+        algo = GraphAlgo()
+        algo.load_from_json('../data/A0.json')
+        algo2 = GraphAlgo()
+        algo2.graph = algo.get_graph()
+        self.assertTrue(algo2.graph.v_size() == 11)
+        self.assertTrue(algo2.graph.e_size() == 22)
 
     def test_load_from_json(self):
-        self.fail()
+        algo = GraphAlgo()
+        algo.load_from_json('../data/A0.json')
+        self.assertTrue(algo.graph.v_size() == 11)
+        self.assertTrue(algo.graph.e_size() == 22)
 
     def test_save_to_json(self):
-        self.fail()
+        graph = DiGraph()
+        graph.add_node(0, (50.0, 20.0))
+        graph.add_node(1, (50.0, 0.0))
+        graph.add_node(2, (0.0, 33.0))
+        graph.add_node(3, (25.0, 0.0))
+        graph.add_edge(0, 1, 2)
+        graph.add_edge(1, 2, 5)
+        graph.add_edge(2, 3, 4)
+        graph.add_edge(3, 0, 9)
+        algo = GraphAlgo()
+        algo.graph = graph
+        algo.save_to_json('../data/test.json')
+        algo.load_from_json('../data/test.json')
+        self.assertTrue(algo.graph.v_size() == 4)
+        self.assertTrue(algo.graph.e_size() == 4)
+
 
     def test_is_connected(self):
-        self.fail()
+        algo = GraphAlgo()
+        algo.load_from_json('../data/A0.json')
+        self.assertTrue(algo.is_connected())
+        algo.load_from_json('../data/A1.json')
+        self.assertTrue(algo.is_connected())
+        algo.load_from_json('../data/T0.json')
+        self.assertFalse(algo.is_connected())
+
+
 
     def test_shortest_path(self):
-        self.fail()
+        algo = GraphAlgo()
+        algo.load_from_json('../data/A0.json')
+        self.assertEqual(algo.shortest_path(3, 8)[1], [3, 4, 5, 6, 7, 8])
+        self.assertEqual(algo.shortest_path(3, 8)[0], 7.286831393469998)
 
     def test_tsp(self):
-        self.fail()
+        algo = GraphAlgo()
+        algo.load_from_json('../data/A0.json')
+        self.assertEqual(algo.TSP([3, 8])[1], 7.286831393469998)
+        self.assertEqual(algo.TSP([3, 8, 4, 7])[1], 17.58122129767496)
+
 
     def test_center_point(self):
-        self.fail()
+        algo = GraphAlgo()
+        algo.load_from_json('../data/A0.json')
+        self.assertTrue(algo.centerPoint()[0], 7)
+        algo.load_from_json('../data/A1.json')
+        self.assertTrue(algo.centerPoint()[0], 8)
+        algo.load_from_json('../data/A5.json')
+        self.assertTrue(algo.centerPoint()[0], 40)
