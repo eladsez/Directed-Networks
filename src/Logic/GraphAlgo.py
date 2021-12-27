@@ -39,12 +39,12 @@ class GraphAlgo(GraphAlgoInterface):
                 for node in graph_dict["Nodes"]:
                     try:
                         pos = tuple(node["pos"].split(","))
-                        self.graph.add_node(node["id"], (float(pos[0]), float(pos[1])))
+                        self.graph.add_node(int(node["id"]), (float(pos[0]), float(pos[1])))
                     except:
                         self.graph.add_node(node["id"])
 
                 for edge in graph_dict["Edges"]:
-                    self.graph.add_edge(edge["src"], edge["dest"], edge["w"])
+                    self.graph.add_edge(int(edge["src"]), int(edge["dest"]), float(edge["w"]))
                 return True
         except FileNotFoundError:
             print(FileNotFoundError)
