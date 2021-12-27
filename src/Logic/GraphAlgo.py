@@ -334,5 +334,5 @@ class GraphAlgo(GraphAlgoInterface):
 
 if __name__ == '__main__':
     algo = GraphAlgo()
-    algo.load_from_json("../../Data/T0.json")
+    algo.load_from_json("../../Data/A5.json")
     algo.plot_graph()

@@ -54,6 +54,10 @@ class TestGraphAlgo(TestCase):
         self.assertTrue(algo.is_connected())
         algo.load_from_json('../data/T0.json')
         self.assertFalse(algo.is_connected())
+        algo.load_from_json('../data/1000Nodes.json')
+        self.assertTrue(algo.is_connected())
+        algo.load_from_json('../data/10000Nodes.json')
+        self.assertTrue(algo.is_connected())
     #
     #
     #
@@ -66,6 +70,7 @@ class TestGraphAlgo(TestCase):
     def test_tsp(self):
         algo = GraphAlgo()
         algo.load_from_json('../data/A0.json')
+
         # path, dist = algo.TSP([1, 2, 3, 4, 5, 6, 7])
         # algo.load_from_json('../data/A1.json')
         # path, dist = algo.TSP([1, 2, 3, 4, 5, 6, 7])
@@ -108,3 +113,4 @@ class TestGraphAlgo(TestCase):
         self.assertTrue(algo.centerPoint()[0], 6)
         algo.load_from_json('../data/A5.json')
         self.assertTrue(algo.centerPoint()[0], 40)
+
