@@ -315,22 +315,8 @@ class GraphAlgo(GraphAlgoInterface):
 
 
 if __name__ == '__main__':
-    # graph = GraphInterface()
-    # graph.add_node(0, (50.0, 20.0))
-    # graph.add_node(1, (50.0, 0.0))
-    # graph.add_node(2, (0.0, 33.0))
-    # graph.add_node(3, (25.0, 0.0))
-    # graph.add_edge(0, 1, 2)
-    # graph.add_edge(1, 2, 5)
-    # graph.add_edge(2, 3, 4)
-    # graph.add_edge(3, 0, 9)
-    # print(graph.__str__())
     algo = GraphAlgo()
-    # print(algo.shortest_path(0,3))
-    # trans = algo.transpose()
-    # print(trans.__str__())
-    algo.load_from_json("../../Data/A0.json")
-    # algo.plot_graph()
+    algo.load_from_json("../../Data/T0.json")
     algo.plot_graph()
 
 
