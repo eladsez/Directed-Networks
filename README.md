@@ -72,9 +72,9 @@ A1 - 1 ms
 A2 - 10 ms  
 A3 - 10 ms    
 A4 - 11 ms  
-A5 - 10 ms      
-1000 vertices - 12 ms  
-10000 vertices - 84 ms  
+A5 - 10 ms   
+1000 vertices - 40 ms  
+10000 vertices - 327 ms  
 ### Running Algorithms:
 ##### `Center`:
 A0 - 8 ms  
@@ -83,6 +83,8 @@ A2 - 215 ms
 A3 - 2 sec 93 ms    
 A4 - 578 ms  
 A5 - 2 sec 98 ms   
+1000 vertices - time out     
+10000 vertices - time out     
 ##### `Isconnected`:  
 A0 - 3 ms  
 A1 - 1 ms  
@@ -90,8 +92,8 @@ A2 - 10 ms
 A3 - 12 ms    
 A4 - 10 ms  
 A5 - 12 ms  
-1000 vertices - 76 ms  
-10000 vertices - 533 ms  
+1000 vertices - 64 ms  
+10000 vertices - 643 ms  
 ##### `TSP` (path of 7 nodes):
 A0 - 20 ms  
 A1 - 42 ms  
@@ -99,6 +101,8 @@ A2 - 147 ms
 A3 - 406 ms    
 A4 - 262 ms  
 A5 - 387 ms  
+1000 vertices - time out  
+10000 vertices - time out
   
 
 ## How To Run:
