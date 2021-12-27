@@ -9,6 +9,8 @@ The goal of this assignment is to design and implement two key interfaces:
 * Weighted directed graphs algorithms interface.  
 
 And also to represent the graph in an interactive graphical interface (matplotlib).  
+In addition we've compared the performance between our implementation in java and our implementation in python, it can be found in the wiki pages of this repository.  
+
 
 ## Aprroach
 Essentialy, this assignment is almost identical to similar assignment we've done in JAVA and most of the work was to "translate" the code to PYTHON.  
@@ -105,5 +107,13 @@ To run the algorithms, do the following:
 2. In the GraphAlgo.py (in the src folder) go to the bottom of the file and choose a graph (json graph files can be found in the Data folder).
 3. Next, choose an algorithm to run on the graph, and finaly run the main function in the GraphAlgo.py file.
 4. if you wish to see the graph graphicly, you can use the function `plot_graph()` that show the graph in matplotlib.  
+(if you're using PyCharm and you have scientific mode enabled, turn it off for the best results)  
+
+## More Information
+- About Directed, Weighted, and Directed + Weighted graphs: http://math.oxford.emory.edu/site/cs171/directedAndEdgeWeightedGraphs/
+- Shortest Path: https://en.wikipedia.org/wiki/Shortest_path_problem#Algorithms
+- Dijkstra: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+- Graph Center: https://en.wikipedia.org/wiki/Graph_center
+- Travelling Salesman Problem (TSP): https://en.wikipedia.org/wiki/Travelling_salesman_problem
 
 
