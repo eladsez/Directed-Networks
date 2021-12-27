@@ -1,7 +1,7 @@
 from abc import ABC
 
 import API.GraphAlgoInterface
-from Node import Node
+from Logic.Node import Node
 from API.GraphInterface import GraphInterface
 
 

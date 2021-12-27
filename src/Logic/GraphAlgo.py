@@ -2,11 +2,11 @@ from API.GraphAlgoInterface import GraphAlgoInterface
 import json
 import sys
 from typing import List
-from DiGraph import DiGraph
+from Logic.DiGraph import DiGraph
 from queue import Queue
 
 from Logic.Node import Node
-from PriorityQueue import PriorityQueue
+from Logic.PriorityQueue import PriorityQueue
 
 
 class GraphAlgo(GraphAlgoInterface):
