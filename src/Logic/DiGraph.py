@@ -1,6 +1,3 @@
-from abc import ABC
-
-import API.GraphAlgoInterface
 from Logic.Node import Node
 from API.GraphInterface import GraphInterface
 
@@ -95,8 +92,20 @@ class DiGraph(GraphInterface):
         """
         if node_id in self.nodes.keys():
             self.nodes.pop(node_id)
+
+            for i, node in enumerate(self.nodes.values()):
+                if node_id in node.edge_in.keys():
+                    node.edge_in.pop(node_id)
+                if node_id in node.edge_out.keys():
+                    node.edge_out.pop(node_id)
+
+            for (src, dest) in list(self.edges):
+                if src == node_id or dest == node_id:
+                    self.edges.pop((src, dest))
+
             self.MC += 1
             return True
+
         else:
             return False
 
@@ -133,8 +142,9 @@ class DiGraph(GraphInterface):
         ans += "],\n\"Nodes\": ["
         nodeiter = enumerate(self.nodes)
         for key, nodeID in nodeiter:
-            ans += "{\n\"pos\": " + "\"" + str(self.nodes[nodeID].pos[0]) + "," + str(
-                self.nodes[nodeID].pos[1]) + ",0.0\"" + ",\n\"id\": " + str(nodeID) + "\n}"
+            if self.nodes[nodeID].pos is not None:
+                ans += "{\n\"pos\": " + "\"" + str(self.nodes[nodeID].pos[0]) + "," + str(
+                        self.nodes[nodeID].pos[1]) + ",0.0\"" + ",\n\"id\": " + str(nodeID) + "\n}"
             if key == len(self.nodes) - 1:
                 ans += "\n"
                 break
@@ -159,3 +169,6 @@ if __name__ == '__main__':
     graph.add_edge(0, 5, 4)
     graph.add_edge(1, 3, 9)
     print(graph.__str__())
+    graph.remove_node(0)
+    print(graph.__str__())
+

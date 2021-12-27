@@ -4,9 +4,9 @@ import sys
 from typing import List
 from Logic.DiGraph import DiGraph
 from queue import Queue
-
 from Logic.Node import Node
 from Logic.PriorityQueue import PriorityQueue
+from GUI.PlotGraph import PlotView
 
 
 class GraphAlgo(GraphAlgoInterface):
@@ -17,6 +17,7 @@ class GraphAlgo(GraphAlgoInterface):
             self.graph = DiGraph()
         else:
             self.graph = graph
+        self.plot = None
 
     def get_graph(self) -> DiGraph:
         """
@@ -38,7 +39,7 @@ class GraphAlgo(GraphAlgoInterface):
                 for node in graph_dict["Nodes"]:
                     try:
                         pos = tuple(node["pos"].split(","))
-                        self.graph.add_node(node["id"], pos)
+                        self.graph.add_node(node["id"], (float(pos[0]), float(pos[1])))
                     except:
                         self.graph.add_node(node["id"])
 
@@ -308,7 +309,9 @@ class GraphAlgo(GraphAlgoInterface):
         @return: None
         """
 
-        raise NotImplementedError
+        self.plot = PlotView(self.graph)
+        self.plot.update_scale()
+        self.plot.draw_graph()
 
 
 if __name__ == '__main__':
@@ -327,7 +330,7 @@ if __name__ == '__main__':
     # trans = algo.transpose()
     # print(trans.__str__())
     algo.load_from_json("../../Data/A0.json")
-    # print(algo.shortest_path(5,30))
-    print(algo.TSP([1, 2, 3, 4]))
-    # print(algo.is_connected())
-    # print(algo.save_to_json("bla.json"))
+    # algo.plot_graph()
+    algo.plot_graph()
+
+
