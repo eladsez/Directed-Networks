@@ -329,7 +329,7 @@ if __name__ == '__main__':
     # print(algo.shortest_path(0,3))
     # trans = algo.transpose()
     # print(trans.__str__())
-    algo.load_from_json("../../Data/A0.json")
+    algo.load_from_json("../../Data/A2.json")
     # algo.plot_graph()
     algo.plot_graph()
 
