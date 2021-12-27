@@ -12,12 +12,12 @@ class PlotView:
 
     # init the pos of the nodes which doesnt has location pos
     def update_scale(self):
-        min_x = min_y = sys.float_info.min
-        max_x = max_y = sys.float_info.max
-        node_list = enumerate(self.graph.nodes.values())
+        min_x = min_y = sys.float_info.max
+        max_x = max_y = sys.float_info.min
+        node_list = list(self.graph.nodes.values())
 
-        for i, node in node_list:
-            if node.pos == None: continue
+        for node in node_list:
+            if node.pos is None: continue
             self.node_x_pos[node.id] = node.pos[0]
             self.node_y_pos[node.id] = node.pos[1]
             if node.pos[0] < min_x: min_x = node.pos[0]
@@ -25,8 +25,13 @@ class PlotView:
             if node.pos[0] > max_x: max_x = node.pos[0]
             if node.pos[1] > max_y: max_y = node.pos[1]
 
-        for i ,node in node_list:
-            if node.pos == None:
+        if min_y == min_x == sys.float_info.max:
+            min_x = min_y = 0
+        if max_y == max_x == sys.float_info.min:
+            max_x = max_y = 10
+
+        for node in node_list:
+            if node.pos is None:
                 self.node_x_pos[node.id] = random.uniform(min_x, max_x)
                 self.node_y_pos[node.id] = random.uniform(min_y, max_y)
 
@@ -43,3 +48,6 @@ class PlotView:
             y2 = float(self.node_y_pos[dest])
             plt.annotate("", xy=(x1, y1), xytext=(x2, y2), arrowprops={"arrowstyle": "<-", "lw": 2})
         plt.show()
+
+if __name__ == '__main__':
+    pass
