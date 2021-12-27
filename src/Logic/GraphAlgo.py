@@ -101,6 +101,12 @@ class GraphAlgo(GraphAlgoInterface):
         return node_counter
 
     def is_connected(self) -> bool:
+        """`isConnected` - return whether the graph is strongly connected or not.
+            We've implemented the algorithm in the following way:
+              1. Run BFS algorithms from a specific node to all of the other nodes
+              2. Run BFS again, this time on the graph transposed.
+              3. Check if the BFS's results are equals to each othe and to the nuber of nodes in the graph.
+              4. If so - the graph is strongly connected.   """
         trans = self.transpose()
         src_id = list(self.graph.nodes.values()).pop().id
         return self.bfs(src_id, self.graph) == self.graph.v_size() == self.bfs(src_id, trans)
@@ -136,23 +142,15 @@ class GraphAlgo(GraphAlgoInterface):
         @param id1: The start node id
         @param id2: The end node id
         @return: The distance of the path, a list of the nodes ids that the path goes through
-        Example:
-#      >>> from GraphAlgo import GraphAlgo
-#       >>> g_algo = GraphAlgo()
-#        >>> g_algo.addNode(0)
-#        >>> g_algo.addNode(1)
-#        >>> g_algo.addNode(2)
-#        >>> g_algo.addEdge(0,1,1)
-#        >>> g_algo.addEdge(1,2,4)
-#        >>> g_algo.shortestPath(0,1)
-#        (1, [0, 1])
-#        >>> g_algo.shortestPath(0,2)
-#        (5, [0, 1, 2])
-        Notes:
         If there is no path between id1 and id2, or one of them dose not exist the function returns (float('inf'),[])
-        More info:
-        https://en.wikipedia.org/wiki/Dijkstra's_algorithm
         """
+        """`shortestPath` - return the shortest path between two nodes.  
+            We've implemented the algorithm in the following way:    
+              1. Run DIJKSTRA algorithm on the source node - in order to get in each node the shortest path from the source, 
+                and the distance. 
+              2. Because each node tag "carry" the node that came before it in the path, 
+                all there is to do is to loop from the destination node and ask who came before until we get to the source node.
+              3. The results are then inserted into a list and returned """
         nodes_id = list(self.graph.nodes.keys())
         if (not id1 in nodes_id) or (not id2 in nodes_id):
             return float('inf'), []
@@ -236,6 +234,19 @@ class GraphAlgo(GraphAlgoInterface):
         :param node_lst: A list of nodes id's
         :return: A list of the nodes id's in the path, and the overall distance
         """
+        """ `tsp` - return the shortest path between a list of nodes.   
+            **Approach:** we are using swapping algorithm, in order to get an acceptable path at reasonable time.
+            We've implemented the algorithm in the following way:    
+              1. Start with a random route that start in the source node.
+              2. Perform a swap between nodes (except the source).
+              3. Keep new route if it is shorter.
+              4. Repeat (2-3) for all possible swaps.
+            since in this assignment we are not required to return to the source node it's simplify the solution a bit.  
+            This algorithm is both faster, O(M*N^2) and produces better solutions then greedy algorithm.  
+            The intuition behind the algorithm is that, 
+            swapping untangles routes that cross over itself (gets rid of circle's when possible).  
+            This swap algorithm performed much better than greedy; 
+            the path it drew looks similar to something a human might draw. """
         # run only on connected graphs, with 1 node minimum
         if not self.is_connected() or self.graph.v_size() == 0:
             return None
@@ -274,6 +285,13 @@ class GraphAlgo(GraphAlgoInterface):
         Finds the node that has the shortest distance to it's farthest node.
         :return: The nodes id, min-maximum distance
         """
+        """ `center` - return the node that is the closest to every other node.   
+            **Approach:** we are searching for the node with the shortest path, 
+            but from the longest result this node got from `shortestPathDist`.
+            We've implemented the algorithm in the following way:    
+              1. Loop through all of the nodes in the graph.
+              2. For each node check with `shortestPathDist` what is the **longest** path
+              3. Return the node with the shortest one. """
         if not self.is_connected(): return None, sys.float_info.max
         center_id = None
         min_dist = sys.float_info.max
@@ -318,5 +336,3 @@ if __name__ == '__main__':
     algo = GraphAlgo()
     algo.load_from_json("../../Data/T0.json")
     algo.plot_graph()
-
-
