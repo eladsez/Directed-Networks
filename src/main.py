@@ -18,9 +18,10 @@ def check():
     (7, 6.806805834715163)
     ([1,3,4,2],3.5)
     """
-    check0()
+    # check0()
     # check1()
     # check2()
+    # check3()
 
 
 def check0():
