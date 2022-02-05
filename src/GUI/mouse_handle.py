@@ -1,5 +1,7 @@
 from tkinter import Tk, Button, Canvas, LEFT
 
+from GUI.Canvas import ResizingCanvas
+
 
 def draw(event):
     x, y = event.x, event.y
@@ -8,7 +10,7 @@ def draw(event):
     elif int(event.type) == 5:  # mouse released
         x_old, y_old = canvas.old_coords
         if x_old + 3 > x > x_old - 3 and y_old + 3 > y > y_old - 3:
-            canvas.create_oval(x, y, x + 7, y + 7, fill='black')
+            canvas.create_oval(x, y, x + 12, y + 12, fill='black')
         else:
             canvas.create_line(x, y, x_old, y_old)
         canvas.old_coords = None
@@ -26,7 +28,7 @@ def draw_line_move(event):
 
 root = Tk()
 
-canvas = Canvas(root, width=400, height=400)
+canvas = ResizingCanvas(root, width=400, height=400, bg='#0C4C92')
 canvas.pack()
 canvas.old_coords = None
 line = None
