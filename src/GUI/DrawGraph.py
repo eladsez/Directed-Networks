@@ -1,4 +1,4 @@
-from tkinter import Tk, Frame, BOTH, YES
+from tkinter import Tk, Frame, BOTH, YES, Button
 from GUI.Canvas import ResizingCanvas
 from Logic.GraphAlgo import GraphAlgo
 
@@ -13,17 +13,44 @@ class DrawGraph:
         self.canvas.pack(fill=BOTH, expand=YES)
         self.canvas.old_coords = None
         self.movement = None
+        self.permission = False
         self.root.bind('<ButtonPress>', self.draw)
         self.root.bind('<ButtonRelease>', self.draw)
         self.root.bind('<Motion>', self.draw_line_move)
+        self.create_buttons()
         self.root.mainloop()
 
+    def change_prem(self, start_draw:Button):
+        if self.permission:
+            start_draw['text'] = '- Start Draw -'
+            self.permission = False
+        else:
+            start_draw.place(relheight=0.0450, relwidth=0.135, relx=0.45, rely=0.07)
+            start_draw['text'] = '- Stop Draw -'
+            self.canvas.old_coords = None
+            self.movement = None
+            self.permission = True
+
+    def create_buttons(self):
+        start_draw = Button(self.canvas, text="- Start Draw -", borderwidth=0, font=("Helvetica", 13),
+               command=lambda: self.change_prem(start_draw))
+        start_draw.place(relheight=0.0450, relwidth=0.135, relx=0.45, rely=0.5)
+        Button(self.canvas, text='Clear', borderwidth=0, font=("Helvetica", 13), command=lambda: self.canvas.delete("all"))\
+            .place(relheight=0.0450, relwidth=0.135, relx=0.45, rely=0.02)
+        Button(self.canvas, text='Center', borderwidth=0, font=("Helvetica", 13))\
+            .place(relheight=0.0450, relwidth=0.135, relx=0.15, rely=0.05)
+        Button(self.canvas, text='Shortest Path', borderwidth=0, font=("Helvetica", 13))\
+            .place(relheight=0.0450, relwidth=0.135, relx=0.75, rely=0.05)
+
     def draw(self, event):
+        if not self.permission: return
         x, y = event.x, event.y
         if int(event.type) == 4:  # mouse clicked
             self.canvas.old_coords = x, y
 
         elif int(event.type) == 5:  # mouse released
+            if not self.canvas.old_coords:
+                return
             x_old, y_old = self.canvas.old_coords
 
             if x_old + 5 > x > x_old - 5 and y_old + 5 > y > y_old - 5:
@@ -36,6 +63,7 @@ class DrawGraph:
             self.movement = None
 
     def draw_line_move(self, event):
+        if not self.permission: return
         if self.movement:
             self.canvas.delete(self.movement)
         x, y = event.x, event.y
