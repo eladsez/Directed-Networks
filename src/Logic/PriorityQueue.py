@@ -5,8 +5,8 @@ class PriorityQueue:
     def enqueue(self, data):
         i = 0
         for curr in self.pq:
-            if len(self.pq) == 0: self.pq.append(data
-                                                 )
+            if len(self.pq) == 0:
+                self.pq.append(data)
             if data < curr:
                 i += 1
                 continue

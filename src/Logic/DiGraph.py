@@ -33,6 +33,17 @@ class DiGraph(GraphInterface):
         """
         return self.nodes
 
+    def get_all_e(self) -> dict:
+        """return a dictionary of all the edges in the Graph, each edge is represented using a pair
+         ((node1, node2), weight)
+        """
+        all_e = {}
+        for node_out_id, node_out in self.nodes.items():
+            for node_in_id, w in self.all_out_edges_of_node(node_out_id).items():
+                all_e[(node_out_id, node_in_id)] = w
+
+        return all_e
+
     def all_in_edges_of_node(self, id1: int) -> dict:
         """return a dictionary of all the nodes connected to (into) node_id ,
         each node is represented using a pair (other_node_id, weight)

@@ -7,6 +7,7 @@ from queue import Queue
 from Logic.Node import Node
 from Logic.PriorityQueue import PriorityQueue
 from GUI.PlotGraph import PlotView
+from Logic.UnionFind import UnionFind
 
 
 class GraphAlgo(GraphAlgoInterface):
@@ -319,6 +320,21 @@ class GraphAlgo(GraphAlgoInterface):
 
         return max_dist
 
+    def kruskal_MST(self) -> List[tuple]:
+        mts = []
+        edges = dict(sorted(self.graph.get_all_e().items(), key=lambda item: item[1]))
+        nodes = self.graph.get_all_v()
+        sets = UnionFind()
+        for node_id, node in nodes.items():
+            sets.make_set(node_id)
+
+        for (src, dest), w in edges.items():
+            if sets.find(src) != sets.find(dest):
+                mts.append((src, dest))
+                sets.union(src, dest)
+
+        return mts
+
     def plot_graph(self) -> None:
         """
         Plots the graph.
@@ -334,5 +350,5 @@ class GraphAlgo(GraphAlgoInterface):
 
 if __name__ == '__main__':
     algo = GraphAlgo()
-    algo.load_from_json("../../Data/A5.json")
-    algo.plot_graph()
+    algo.load_from_json("../../Data/A0.json")
+    print(algo.kruskal_MST())
