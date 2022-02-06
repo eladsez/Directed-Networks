@@ -1,3 +1,6 @@
+import sys
+from math import sqrt
+
 from Logic.Node import Node
 from API.GraphInterface import GraphInterface
 
@@ -125,6 +128,25 @@ class DiGraph(GraphInterface):
                 self.edges.pop((node_id1, node_id2))
                 return True
         return False
+
+    def find_node_by_pos(self, pos:tuple):
+        """
+        :param pos: The node pos Approximately
+        :return: the node id of the node how have the most close pos
+        """
+        chosen_node = None
+        min_dist = sys.float_info.max
+        for id, node in self.nodes.items():
+            curr_dist = sqrt(pow((node.pos[0] - pos[0]), 2) + pow((node.pos[1] - pos[1]), 2))
+            if curr_dist < min_dist:
+                min_dist = curr_dist
+                chosen_node = id
+        return chosen_node
+
+    def clear_graph(self):
+        self.nodes = {}
+        self.edges = {}
+        self.MC = 0
 
     def __str__(self):
         ans = "{\n\"Edges\": [\n"
