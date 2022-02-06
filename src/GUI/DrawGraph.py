@@ -43,7 +43,8 @@ class DrawGraph:
         Button(self.canvas, text='Center', borderwidth=0, font=("Helvetica", 13),
                command=lambda: self.draw_from_event(center_node=self.algo.centerPoint()[0])) \
             .place(relheight=0.0450, relwidth=0.135, relx=0.15, rely=0.05)
-        Button(self.canvas, text='Shortest Path', borderwidth=0, font=("Helvetica", 13)) \
+        Button(self.canvas, text='MST Kruskal', borderwidth=0, font=("Helvetica", 13),
+               command=lambda: self.draw_from_event(color='red', colored=self.algo.kruskal_MST()))\
             .place(relheight=0.0450, relwidth=0.135, relx=0.75, rely=0.05)
 
     def clear_button(self):
@@ -64,7 +65,8 @@ class DrawGraph:
 
             if x_old + 5 > x > x_old - 5 and y_old + 5 > y > y_old - 5:
                 self.canvas.create_oval(x, y, x + 12, y + 12, fill='black')
-                self.canvas.create_text(x + 6, y - 12, text=str(self.algo.get_graph().MC), fill='black', font=("Helvetica", 13))
+                self.canvas.create_text(x + 6, y - 12, text=str(self.algo.get_graph().MC),
+                                        fill='black', font=("Helvetica", 13))
                 self.algo.get_graph().add_node(self.algo.get_graph().MC, (x, y))
             else:
                 self.canvas.create_line(x, y, x_old, y_old)
@@ -87,13 +89,19 @@ class DrawGraph:
         self.canvas.delete("all")
         for id, node in self.algo.get_graph().get_all_v().items():
             self.canvas.create_text(node.pos[0] + 6, node.pos[1] - 12, text=str(id), fill='black', font=("Helvetica", 13))
+
             if id == center_node:
                 self.canvas.create_oval(node.pos[0], node.pos[1], node.pos[0] + 12, node.pos[1] + 12, fill='red')
             else:
                 self.canvas.create_oval(node.pos[0], node.pos[1], node.pos[0] + 12, node.pos[1] + 12, fill='black')
+
             for other_id, w in self.algo.get_graph().all_out_edges_of_node(id).items():
                 other_node = self.algo.get_graph().nodes[other_id]
-                self.canvas.create_line(node.pos[0] + 6, node.pos[1] + 6, other_node.pos[0] + 6, other_node.pos[1] + 6)
+                if (id, other_id) in colored:
+                    self.canvas.create_line(node.pos[0] + 6, node.pos[1] + 6, other_node.pos[0] + 6, other_node.pos[1] + 6
+                                            , fill=color)
+                else:
+                    self.canvas.create_line(node.pos[0] + 6, node.pos[1] + 6, other_node.pos[0] + 6, other_node.pos[1] + 6)
 
 
 if __name__ == '__main__':
