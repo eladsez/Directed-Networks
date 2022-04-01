@@ -29,8 +29,6 @@ class UnionFind:
             return self.find(node.parent.value)
 
     def union(self, val1, val2):
-        # node1 = self.nodes[val1]
-        # node2 = self.nodes[val2]
         parent1 = self.find(val1)
         parent2 = self.find(val2)
         if parent1 == parent2:

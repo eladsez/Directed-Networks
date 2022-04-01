@@ -1,3 +1,5 @@
+from functools import cmp_to_key
+
 from API.GraphAlgoInterface import GraphAlgoInterface
 import json
 import sys
@@ -14,7 +16,7 @@ class GraphAlgo(GraphAlgoInterface):
     """This abstract class represents an interface of a graph."""
 
     def __init__(self, graph: DiGraph = None):
-        if graph == None:
+        if graph is None:
             self.graph = DiGraph()
         else:
             self.graph = graph
@@ -32,7 +34,7 @@ class GraphAlgo(GraphAlgoInterface):
         @param file_name: The path to the json file
         @returns True if the loading was successful, False o.w.
         """
-        if self.graph != None:
+        if self.graph is not None:
             self.graph = DiGraph()
         try:
             with open(file_name, "r") as f:
@@ -62,7 +64,7 @@ class GraphAlgo(GraphAlgoInterface):
                 f.write(self.graph.__str__())
             return True
         except Exception:
-            print(Exception)
+            raise Exception
             return False
 
     def transpose(self) -> DiGraph:
@@ -321,6 +323,11 @@ class GraphAlgo(GraphAlgoInterface):
         return max_dist
 
     def kruskal_MST(self) -> List[tuple]:
+        """
+        This method is an implementation of the kruskal minimum spanning tree algorithm
+        by using the union find data structure
+        :return: a list representing all the edges in the MST by tuple of (src_node_id, dest_node_id)
+        """
         mts = []
         edges = dict(sorted(self.graph.get_all_e().items(), key=lambda item: item[1]))
         nodes = self.graph.get_all_v()
@@ -334,6 +341,63 @@ class GraphAlgo(GraphAlgoInterface):
                 sets.union(src, dest)
 
         return mts
+
+    # To find orientation of ordered triplet (p, q, r).
+    # The function returns following values
+    # 0 --> p, q and r are collinear
+    # 1 --> Clockwise
+    # -1 --> Counterclockwise
+    def orientation(self, p: Node, q: Node, r: Node):
+        val = ((q.pos[1] - p.pos[1]) * (r.pos[0] - q.pos[0]) -
+               (q.pos[0] - p.pos[0]) * (r.pos[1] - q.pos[1]))
+        if val == 0:
+            return 0  # collinear
+        elif val > 0:
+            return 1  # clock wise
+        else:
+            return -1  # counterclock wise
+
+    # A utility function to return square of distance
+    # between p1 and p2
+    def distSq(self, p1, p2):
+        return ((p1.pos[0] - p2.pos[0]) * (p1.pos[0] - p2.pos[0]) +
+                (p1.pos[1] - p2.pos[1]) * (p1.pos[1] - p2.pos[1]))
+
+    # A function used by cmp_to_key function to sort an array of
+    # points with respect to the first point
+    def compare(self, p1, p2):
+        global start_node
+        # Find orientation
+        o = self.orientation(start_node, p1, p2)
+        if o == 0:
+            if self.distSq(start_node, p2) >= self.distSq(start_node, p1):
+                return -1
+            else:
+                return 1
+        else:
+            if o == -1:
+                return -1
+            else:
+                return 1
+
+    def convex_hull(self):
+        nodes = list(self.graph.get_all_v().values())
+        if len(nodes) < 3:
+            return
+        global start_node
+        start_node = max(nodes, key=lambda node: node.pos[1])
+        nodes.remove(start_node)
+        nodes.sort(key=cmp_to_key(self.compare))
+        stack = [start_node, nodes[0], nodes[1]]
+        for i in range(2, len(nodes)):
+            while len(stack) > 1 and self.orientation(stack[-2], stack[-1], nodes[i]) != -1:
+                stack.pop()
+            stack.append(nodes[i])
+
+        for i in range(1, len(stack)):
+            self.graph.add_edge(stack[i - 1].id, stack[i].id, 0)
+        self.graph.add_edge(stack[0].id, stack[-1].id, 0)
+
 
     def plot_graph(self) -> None:
         """
@@ -351,4 +415,4 @@ class GraphAlgo(GraphAlgoInterface):
 if __name__ == '__main__':
     algo = GraphAlgo()
     algo.load_from_json("../../Data/A0.json")
-    print(algo.kruskal_MST())
+    print(algo.convex_hull())

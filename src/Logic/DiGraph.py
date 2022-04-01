@@ -1,3 +1,4 @@
+import random
 import sys
 from math import sqrt
 
@@ -153,6 +154,12 @@ class DiGraph(GraphInterface):
                 min_dist = curr_dist
                 chosen_node = id
         return chosen_node
+
+    def connect_all(self):
+        for node_id1, node1 in self.nodes.items():
+            for node_id2, node2 in self.nodes.items():
+                if node_id1 == node_id2: continue
+                self.add_edge(node_id1, node_id2, random.uniform(0.5, 10.5))
 
     def clear_graph(self):
         self.nodes = {}

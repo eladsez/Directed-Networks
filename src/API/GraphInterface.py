@@ -1,4 +1,7 @@
-class GraphInterface:
+from abc import ABC
+
+
+class GraphInterface(ABC):
     """This abstract class represents an interface of a graph."""
 
     def v_size(self) -> int:
