@@ -1,23 +1,25 @@
 # Weighted directed graphs (directed networks)
 
 > Made by Elad Seznayev and Nerya Bigon.
-* As part of OOP course assignment.
 
 ## Goal:
-The goal of this assignment is to design and implement two key interfaces:
+The goal of this project is to design and implement two key interfaces:
 * Weighted directed graph interface.
 * Weighted directed graphs algorithms interface.  
 
-And also to represent the graph in an interactive graphical interface (matplotlib).  
-In addition we've compared the performance between our implementation in java and our implementation in python, it can be found in the wiki pages of this repository.  
-
-
-## Aprroach
-Essentialy, this assignment is almost identical to similar assignment we've done in JAVA and most of the work was to "translate" the code to PYTHON.  
-For this reason we didn't changed our algorithms much logicly and just made the neccessery chages in the project structure, and in the code so it would work in the expected way in python.  
+And also to represent the graph in an interactive graphical interface (matplotlib/drawGraph) that will introduce the algorithms.  
+In addition we've compared the performance between our implementation in java and our implementation in python for some algorithm, it can be found in the wiki pages of this repository.  
 
 
 ## Algorithms:
+* `kruskal_MST` - return the minimum spaninig tree in the graph (list of edges).
+This method is an implementation of the kruskal minimum spanning tree algorithm by using the union find data structure.
+There is also GUI that illustrate the algorithm - still in development.
+
+* `convex_hull` - given set of vertices the algorithm will return a list of edges representing the Convex Hull for this set.
+The algorithm in this method is an implementation of Graham scan algorithm for finding Convex Hull.
+There is also GUI that illustrate the algorithm - still in development.
+
 * `isConnected` - return whether the graph is strongly connected or not.  
 We've implemented the algorithm in the following way:    
   1. Run BFS algorithms from a specific node to all of the other nodes
@@ -54,7 +56,7 @@ We've implemented the algorithm in the following way:
 since in this assignment we are not required to return to the source node it's simplify the solution a bit.  
 This algorithm is both faster, O(M*N^2) and produces better solutions then greedy algorithm.  
 The intuition behind the algorithm is that swapping untangles routes that cross over itself (gets rid of circel's when posible).  
-This swap algorithm performed much better than greedy; the path it drew looks similar to something a human might draw.  
+This swap algorithm performed much better than greedy; the path it drew looks similar to something a human might draw.
 
 ## Structure:  
 
@@ -119,5 +121,6 @@ To run the algorithms, do the following:
 - Dijkstra: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 - Graph Center: https://en.wikipedia.org/wiki/Graph_center
 - Travelling Salesman Problem (TSP): https://en.wikipedia.org/wiki/Travelling_salesman_problem
+- Kruskal MST algorithm: https://en.wikipedia.org/wiki/Kruskal%27s_algorithm
 
 
