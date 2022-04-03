@@ -67,46 +67,6 @@ Class/file | Description
 `GraphAlgo` | this class holds all of the algorithms -> implements the `GraphAlgoInterface` interface.
 `Node` | This class represent a node.
 
-## Results:
-### Load Graph:
-A0 - 2 ms  
-A1 - 1 ms  
-A2 - 10 ms  
-A3 - 10 ms    
-A4 - 11 ms  
-A5 - 10 ms   
-1000 vertices - 40 ms  
-10000 vertices - 327 ms  
-### Running Algorithms:
-##### `Center`:
-A0 - 8 ms  
-A1 - 32 ms  
-A2 - 215 ms  
-A3 - 2 sec 93 ms    
-A4 - 578 ms  
-A5 - 2 sec 98 ms   
-1000 vertices - time out     
-10000 vertices - time out     
-##### `Isconnected`:  
-A0 - 3 ms  
-A1 - 1 ms  
-A2 - 10 ms  
-A3 - 12 ms    
-A4 - 10 ms  
-A5 - 12 ms  
-1000 vertices - 64 ms  
-10000 vertices - 643 ms  
-##### `TSP` (path of 7 nodes):
-A0 - 20 ms  
-A1 - 42 ms  
-A2 - 147 ms  
-A3 - 406 ms    
-A4 - 262 ms  
-A5 - 387 ms  
-1000 vertices - time out  
-10000 vertices - time out
-  
-
 ## How To Run:
 To run the algorithms, do the following:
 1. Download this repository and open it in an IDE.
@@ -122,5 +82,6 @@ To run the algorithms, do the following:
 - Graph Center: https://en.wikipedia.org/wiki/Graph_center
 - Travelling Salesman Problem (TSP): https://en.wikipedia.org/wiki/Travelling_salesman_problem
 - Kruskal MST algorithm: https://en.wikipedia.org/wiki/Kruskal%27s_algorithm
+- Graham Convex Hull - https://en.wikipedia.org/wiki/Graham_scan
 
 
